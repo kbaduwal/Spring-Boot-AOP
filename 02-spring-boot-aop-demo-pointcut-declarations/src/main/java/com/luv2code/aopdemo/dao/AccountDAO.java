@@ -9,6 +9,8 @@ public interface AccountDAO {
     // add a new method: findAccounts()
 
     List<Account> findAccount();
+    List<Account> findAccounts(boolean tripWire);
+
     void addAccount(Account theAccount, boolean vipFlap);
 
     boolean doWork();
@@ -20,4 +22,5 @@ public interface AccountDAO {
     public String getServiceCode();
 
     public void setServiceCode(String serviceCode);
+
 }
