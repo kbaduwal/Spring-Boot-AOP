@@ -2,10 +2,8 @@ package com.luv2code.aopdemo.aspect;
 
 import com.luv2code.aopdemo.Account;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -16,6 +14,48 @@ import java.util.List;
 @Component
 @Order(2)
 public class MyDemoLoggingAspect {
+    @Around("execution(* com.luv2code.aopdemo.service.*.getFortune(..))")
+    public Object aroundGetFortune(
+            ProceedingJoinPoint theProceedingJoinPoint) throws Throwable{
+
+        // print out method we are advising on
+        String method = theProceedingJoinPoint.getSignature().toShortString();
+        System.out.println("\n=====>>> Executing the @Around on method: "+method);
+
+        // get begin timestamp
+        long begin = System.currentTimeMillis();
+
+        // now, let's execute the method
+        Object result =null;
+        try {
+           result = theProceedingJoinPoint.proceed();
+        }catch (Exception exc){
+            // og the exception
+            System.out.println(exc.getMessage());
+
+            // give a user custom message
+            //result = "Major accident! But no worries, your private AOP helicopter is on the way!";
+
+            // 386 rethrow exception
+            throw exc;
+        }
+
+        // get and timestamp
+        long end = System.currentTimeMillis();
+
+        // compute duration and display it
+        long duration = end - begin;
+        System.out.println("\n======> Duration: "+duration/1000.0 +"seconds");
+
+        return result;
+    }
+
+    @After("execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))")
+    public void afterFinallyFindAccountsAdvice(JoinPoint theJoinPoint){
+        // print out wish method we are advising on
+        String method = theJoinPoint.getSignature().toShortString();
+        System.out.println("\n=====>>> Executing the @After (finally) on method: "+method);
+    }
 
     @AfterThrowing(
             pointcut = "execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))",

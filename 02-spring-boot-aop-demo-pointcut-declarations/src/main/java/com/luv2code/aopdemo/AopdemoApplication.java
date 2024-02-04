@@ -2,6 +2,7 @@ package com.luv2code.aopdemo;
 
 import com.luv2code.aopdemo.dao.AccountDAO;
 import com.luv2code.aopdemo.dao.MembershipDAO;
+import com.luv2code.aopdemo.service.TrafficFortuneService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,13 +18,74 @@ public class AopdemoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner commandLineRunner(AccountDAO theAccountDAO, MembershipDAO theMembershipDAO){
+	public CommandLineRunner commandLineRunner(AccountDAO theAccountDAO,
+											   MembershipDAO theMembershipDAO,
+											   TrafficFortuneService theTrafficFortuneService){
 		return runner ->{
 			// demoTheBeforeAdvice(theAccountDAO, theMembershipDAO);
-			//demoTheAfterReturningAdvice(theAccountDAO);
-			demoTheAfterThrowingAdvice(theAccountDAO);
+			// demoTheAfterReturningAdvice(theAccountDAO);
+			// demoTheAfterThrowingAdvice(theAccountDAO);
+			// demoTheAfterAdvice(theAccountDAO);
+			//demoTheAroundAdvice(theTrafficFortuneService);
+			//demoTheAroundAdviceHandleException(theTrafficFortuneService);
+
+			demoTheAroundAdviceRethrowException(theTrafficFortuneService);
+
 
 		};
+	}
+
+	private void demoTheAroundAdviceRethrowException(TrafficFortuneService theTrafficFortuneService) {
+		System.out.println("\nMain Program: demoTheAroundAdviceRethrowException");
+		System.out.println("Calling getFortune");
+
+		boolean tripWire = true;
+		String data = theTrafficFortuneService.getFortune(tripWire);
+
+		System.out.println("\nMy fortune is: "+data);
+		System.out.println("Finished");
+	}
+
+	private void demoTheAroundAdviceHandleException(TrafficFortuneService theTrafficFortuneService) {
+		System.out.println("\nMain Program: demoTheAroundAdviceHandleException");
+		System.out.println("Calling getFortune");
+
+		boolean tripWire = true;
+		String data = theTrafficFortuneService.getFortune(tripWire);
+
+		System.out.println("\nMy fortune is: "+data);
+		System.out.println("Finished");
+
+	}
+
+	private void demoTheAroundAdvice(TrafficFortuneService theTrafficFortuneService) {
+		System.out.println("\nMain Program: demoTheAroundAdvice");
+		System.out.println("Calling getFortune");
+
+		String data = theTrafficFortuneService.getFortune();
+
+		System.out.println("\nMy fortune is: "+data);
+		System.out.println("Finished");
+	}
+
+	private void demoTheAfterAdvice(AccountDAO theAccountDAO) {
+		// call the method to find the accounts
+		List<Account> theAccounts = null;
+		try{
+			// adding boolean flag to simulate exceptions
+			boolean tripWire = false;
+			theAccounts = theAccountDAO.findAccounts(tripWire);
+		}catch (Exception exc){
+			System.out.println("\n\nMain Program: .... caught exception: "+exc);
+		}
+
+		// display the accounts
+		System.out.println("\n\nMain Program: demoTheAfterThrowingAdvice");
+		System.out.println("------");
+
+		System.out.println(theAccounts);
+
+		System.out.println("\n");
 	}
 
 	private void demoTheAfterThrowingAdvice(AccountDAO theAccountDAO) {
